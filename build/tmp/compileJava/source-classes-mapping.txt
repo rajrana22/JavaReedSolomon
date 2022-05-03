@@ -1,0 +1,42 @@
+com/backblaze/erasure/ByteOutputInputTableCodingLoop.java
+ com.backblaze.erasure.ByteOutputInputTableCodingLoop
+com/backblaze/erasure/InputOutputByteExpCodingLoop.java
+ com.backblaze.erasure.InputOutputByteExpCodingLoop
+com/backblaze/erasure/CodingLoop.java
+ com.backblaze.erasure.CodingLoop
+com/backblaze/erasure/ReedSolomon.java
+ com.backblaze.erasure.ReedSolomon
+com/backblaze/erasure/SampleDecoder.java
+ com.backblaze.erasure.SampleDecoder
+com/backblaze/erasure/InputOutputByteTableCodingLoop.java
+ com.backblaze.erasure.InputOutputByteTableCodingLoop
+com/backblaze/erasure/OutputInputByteTableCodingLoop.java
+ com.backblaze.erasure.OutputInputByteTableCodingLoop
+com/backblaze/erasure/InputByteOutputExpCodingLoop.java
+ com.backblaze.erasure.InputByteOutputExpCodingLoop
+com/backblaze/erasure/ByteOutputInputExpCodingLoop.java
+ com.backblaze.erasure.ByteOutputInputExpCodingLoop
+com/backblaze/erasure/CodingLoopBase.java
+ com.backblaze.erasure.CodingLoopBase
+com/backblaze/erasure/InputByteOutputTableCodingLoop.java
+ com.backblaze.erasure.InputByteOutputTableCodingLoop
+com/backblaze/erasure/ReedSolomonBenchmark.java
+ com.backblaze.erasure.ReedSolomonBenchmark
+ com.backblaze.erasure.ReedSolomonBenchmark$BufferSet
+ com.backblaze.erasure.ReedSolomonBenchmark$Measurement
+com/backblaze/erasure/SampleEncoder.java
+ com.backblaze.erasure.SampleEncoder
+com/backblaze/erasure/Galois.java
+ com.backblaze.erasure.Galois
+com/backblaze/erasure/ByteInputOutputExpCodingLoop.java
+ com.backblaze.erasure.ByteInputOutputExpCodingLoop
+com/backblaze/erasure/OutputInputByteExpCodingLoop.java
+ com.backblaze.erasure.OutputInputByteExpCodingLoop
+com/backblaze/erasure/OutputByteInputTableCodingLoop.java
+ com.backblaze.erasure.OutputByteInputTableCodingLoop
+com/backblaze/erasure/Matrix.java
+ com.backblaze.erasure.Matrix
+com/backblaze/erasure/OutputByteInputExpCodingLoop.java
+ com.backblaze.erasure.OutputByteInputExpCodingLoop
+com/backblaze/erasure/ByteInputOutputTableCodingLoop.java
+ com.backblaze.erasure.ByteInputOutputTableCodingLoop

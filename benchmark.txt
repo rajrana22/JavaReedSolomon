@@ -1,0 +1,41 @@
+My Throughput:
+
+    ByteInputOutputExpCodingLoop encodeParity     148.3 MB/s
+    ByteInputOutputExpCodingLoop isParityCorrect  246.7 MB/s
+    ByteInputOutputTableCodingLoop encodeParity   189.6 MB/s
+    ByteInputOutputTableCodingLoop isParityCorrect 251.8 MB/s
+    ByteOutputInputExpCodingLoop encodeParity     203.9 MB/s
+    ByteOutputInputExpCodingLoop isParityCorrect  252.4 MB/s
+    ByteOutputInputTableCodingLoop encodeParity   230.9 MB/s
+    ByteOutputInputTableCodingLoop isParityCorrect 252.7 MB/s
+    InputByteOutputExpCodingLoop encodeParity     187.0 MB/s
+    InputByteOutputExpCodingLoop isParityCorrect  252.0 MB/s
+    InputByteOutputTableCodingLoop encodeParity   221.8 MB/s
+    InputByteOutputTableCodingLoop isParityCorrect 252.5 MB/s
+    InputOutputByteExpCodingLoop encodeParity     378.5 MB/s
+    InputOutputByteExpCodingLoop isParityCorrect  252.1 MB/s
+    InputOutputByteTableCodingLoop encodeParity   887.2 MB/s
+    InputOutputByteTableCodingLoop isParityCorrect 408.8 MB/s
+    OutputByteInputExpCodingLoop encodeParity     206.9 MB/s
+    OutputByteInputExpCodingLoop isParityCorrect  252.1 MB/s
+    OutputByteInputTableCodingLoop encodeParity   267.3 MB/s
+    OutputByteInputTableCodingLoop isParityCorrect 252.2 MB/s
+    OutputInputByteExpCodingLoop encodeParity     375.2 MB/s
+    OutputInputByteExpCodingLoop isParityCorrect  252.5 MB/s
+    OutputInputByteTableCodingLoop encodeParity   421.8 MB/s
+    OutputInputByteTableCodingLoop isParityCorrect 406.5 MB/s
+
+Throughput from Backblaze:
+
+    ByteInputOutputExpCodingLoop         95.2 MB/s
+    ByteInputOutputTableCodingLoop      107.0 MB/s
+    ByteOutputInputExpCodingLoop        130.3 MB/s
+    ByteOutputInputTableCodingLoop      181.4 MB/s
+    InputByteOutputExpCodingLoop         94.4 MB/s
+    InputByteOutputTableCodingLoop      138.3 MB/s
+    InputOutputByteExpCodingLoop        200.4 MB/s
+    InputOutputByteTableCodingLoop      525.7 MB/s
+    OutputByteInputExpCodingLoop        143.7 MB/s
+    OutputByteInputTableCodingLoop      209.5 MB/s
+    OutputInputByteExpCodingLoop        217.6 MB/s
+    OutputInputByteTableCodingLoop      515.7 MB/s

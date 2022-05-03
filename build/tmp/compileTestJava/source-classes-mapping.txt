@@ -1,0 +1,6 @@
+com/backblaze/erasure/ReedSolomonTest.java
+ com.backblaze.erasure.ReedSolomonTest
+com/backblaze/erasure/GaloisTest.java
+ com.backblaze.erasure.GaloisTest
+com/backblaze/erasure/MatrixTest.java
+ com.backblaze.erasure.MatrixTest
