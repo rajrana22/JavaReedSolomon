@@ -2,35 +2,43 @@ import os
 import argparse
 import numpy as np
 import seaborn as sns; sns.set_theme()
+import matplotlib.pylab as plt
+import re
 
 max_n = 16
 max_k = 3
 throughput_filename = "throughput"
 heatmap_filename = "heatmap"
 
-def run_single_benchmark(n, k, filename):
-    os.system("./run_benchmark.sh -n " + str(n) + " -k " + str(k) + " -f " + filename + ".log")
+def run_benchmark(n, k, filename):
+    os.system("./run_benchmark.sh -n " + str(n) + " -k " + str(k) + " -f " + filename)
 
+def create_array():
+    array = [[0 for n in range(max_n + 1)] for k in range(max_k + 1)]
+    return array
 
-def run_full_benchmark(filename):
-    for i in range(max_n):
-        for j in range(max_k):
-            run_single_benchmark(i+1, j+1, filename)
-
-def generate_data(filename):
-    with open(filename + ".log") as f:
+def generate_single_point(n, k, data, filename):
+    with open(filename) as f:
         lines = f.readlines()
-    data = []
-    for i in range(max_n):
-        for j in range(max_k):
-            data[i][j] = 1
-    for line in lines:
-        ...
-    np.array(data, dtype=float)
+    for key, line in enumerate(lines):
+        if "Summary:" in line:
+            desired_line = lines[key + 2]
+    throughput = float(re.sub("[^0-9.]", "", desired_line))
+    data[k+1][n+1] = throughput
 
+def generate_data(data, filename):
+    for n in range(max_n):
+        for k in range(max_k):
+            print(n)
+            print(k)
+            run_benchmark(n+1, k+1, filename)
+            generate_single_point(n, k, data, filename)
+            os.remove(filename)
 
 def generate_heatmap(data):
-    ax = sns.heatmap(data)
+    array = np.array(data, dtype=float)
+    ax = sns.heatmap(array, linewidths=0.5, cmap="RePuOrYlGn")
+    ax.invert_yaxis()
 
 
 def parse_args():
@@ -45,13 +53,16 @@ def parse_args():
     parser.add_argument("-o", help="Output filename for heatmap", default=heatmap_filename, type=str)
     args = parser.parse_args()
     max_n = args.n
-    max_n = args.k
-    throughput_filename = args.b
-    heatmap_filename = args.o
+    max_k = args.k
+    throughput_filename = args.b + ".log"
+    heatmap_filename = args.o + ".png"
 
 def main():
     parse_args()
-    run_single_benchmark(max_n, max_k, throughput_filename)
+    data = create_array()
+    generate_data(data, throughput_filename)
+    generate_heatmap(data)
+    plt.show()
 
 if __name__ == "__main__":
     main()

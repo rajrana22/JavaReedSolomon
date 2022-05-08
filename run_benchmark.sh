@@ -7,7 +7,6 @@ do
         k) arguments=$arguments" "${OPTARG};;
         f) filename=${OPTARG};;
     esac
-    echo ${OPTARG}
 done
 
 if [ "$arguments" == "" ]

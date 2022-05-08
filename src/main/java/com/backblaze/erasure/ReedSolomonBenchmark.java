@@ -24,11 +24,11 @@ public class ReedSolomonBenchmark {
 
     public static int DATA_COUNT = 17;
     public static int PARITY_COUNT = 3;
-    private static final int TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
+    private static int TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
     private static final int CHUNK_SIZE = 200 * 1000;
     private static final int PROCESSOR_CACHE_SIZE = 10 * 1024 * 1024;
     private static final int TWICE_PROCESSOR_CACHE_SIZE = 2 * PROCESSOR_CACHE_SIZE;
-    private static final int NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
+    private static int NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
 
     private static final long MEASUREMENT_DURATION = 2 * 1000;
 
@@ -37,14 +37,16 @@ public class ReedSolomonBenchmark {
     private int nextBuffer = 0;
 
     public static void main(String [] args) {
-        System.out.println("Arguments Given:" + args);
-        DATA_COUNT = Integer.parseInt(args[0]);
-        PARITY_COUNT = Integer.parseInt(args[1]);
+        if (args.length != 0) {
+            DATA_COUNT = Integer.parseInt(args[0]);
+            PARITY_COUNT = Integer.parseInt(args[1]);
+            TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
+            NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
+        }
         (new ReedSolomonBenchmark()).run();
     }
 
     public void run() {
-
         System.out.println("preparing...");
         final BufferSet [] bufferSets = new BufferSet [NUMBER_OF_BUFFER_SETS];
         for (int iBufferSet = 0; iBufferSet < NUMBER_OF_BUFFER_SETS; iBufferSet++) {
@@ -55,7 +57,13 @@ public class ReedSolomonBenchmark {
         List<String> summaryLines = new ArrayList<String>();
         StringBuilder csv = new StringBuilder();
         csv.append("Outer,Middle,Inner,Multiply,Encode,Check\n");
-        for (CodingLoop codingLoop : CodingLoop.ALL_CODING_LOOPS) {
+
+        CodingLoop[] DesiredLoop;
+        // Only benchmark with InputOutputByteTableCodingLoop
+        DesiredLoop = new CodingLoop[]{CodingLoop.ALL_CODING_LOOPS[7]};
+        // Loop through all coding loops
+        // DesiredLoop = CodingLoop.ALL_CODING_LOOPS;
+        for (CodingLoop codingLoop : DesiredLoop) {
             Measurement encodeAverage = new Measurement();
             {
                 final String testName = codingLoop.getClass().getSimpleName() + " encodeParity";
