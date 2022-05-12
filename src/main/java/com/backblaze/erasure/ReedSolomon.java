@@ -86,20 +86,31 @@ public class ReedSolomon {
      * @param byteCount The number of bytes to encode in each shard.
      *
      */
-    public void encodeParity(byte[][] shards, int offset, int byteCount) {
+    public long[] encodeParity(byte[][] shards, int offset, int byteCount) {
         // Check arguments.
         checkBuffersAndSizes(shards, offset, byteCount);
 
         // Build the array of output buffers.
+        // Calculate time taken for output buffer
+        long memoryStartTime = System.nanoTime();
         byte [] [] outputs = new byte [parityShardCount] [];
         System.arraycopy(shards, dataShardCount, outputs, 0, parityShardCount);
+        long memoryEndTime = System.nanoTime();
+        long memoryTime = (memoryEndTime - memoryStartTime);
 
         // Do the coding.
+        long encodingStartTime = System.nanoTime();
         codingLoop.codeSomeShards(
                 parityRows,
                 shards, dataShardCount,
                 outputs, parityShardCount,
                 offset, byteCount);
+        long encodingEndTime = System.nanoTime();
+        long encodingTime = (encodingEndTime - encodingStartTime);
+        long[] timeTaken = new long[2];
+        timeTaken[0] = memoryTime;
+        timeTaken[1] = encodingTime;
+        return timeTaken;
     }
 
     /**

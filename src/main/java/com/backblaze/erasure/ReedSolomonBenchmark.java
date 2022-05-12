@@ -28,6 +28,7 @@ public class ReedSolomonBenchmark {
     private static final int CHUNK_SIZE = 200 * 1000;
     private static final int PROCESSOR_CACHE_SIZE = 10 * 1024 * 1024;
     private static final int TWICE_PROCESSOR_CACHE_SIZE = 2 * PROCESSOR_CACHE_SIZE;
+    /* Stripe Size */
     private static int NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
 
     private static final long MEASUREMENT_DURATION = 2 * 1000;
@@ -37,6 +38,7 @@ public class ReedSolomonBenchmark {
     private int nextBuffer = 0;
 
     public static void main(String [] args) {
+        /* Parse args and set global variables */
         if (args.length != 0) {
             DATA_COUNT = Integer.parseInt(args[0]);
             PARITY_COUNT = Integer.parseInt(args[1]);
@@ -59,9 +61,9 @@ public class ReedSolomonBenchmark {
         csv.append("Outer,Middle,Inner,Multiply,Encode,Check\n");
 
         CodingLoop[] DesiredLoop;
-        // Only benchmark with InputOutputByteTableCodingLoop
+        /* Only benchmark with InputOutputByteTableCodingLoop */
         DesiredLoop = new CodingLoop[]{CodingLoop.ALL_CODING_LOOPS[7]};
-        // Loop through all coding loops
+        /* Loop through all coding loops */
         // DesiredLoop = CodingLoop.ALL_CODING_LOOPS;
         for (CodingLoop codingLoop : DesiredLoop) {
             Measurement encodeAverage = new Measurement();
@@ -81,25 +83,25 @@ public class ReedSolomonBenchmark {
             }
             // The encoding test should have filled all of the buffers with
             // correct parity, so we can benchmark parity checking.
-            Measurement checkAverage = new Measurement();
-            {
-                final String testName = codingLoop.getClass().getSimpleName() + " isParityCorrect";
-                System.out.println("\nTEST: " + testName);
-                ReedSolomon codec = new ReedSolomon(DATA_COUNT, PARITY_COUNT, codingLoop);
-                System.out.println("    warm up...");
-                doOneEncodeMeasurement(codec, bufferSets);
-                doOneEncodeMeasurement(codec, bufferSets);
-                System.out.println("    testing...");
-                for (int iMeasurement = 0; iMeasurement < 10; iMeasurement++) {
-                    checkAverage.add(doOneCheckMeasurement(codec, bufferSets, tempBuffer));
-                }
-                System.out.println(String.format("\nAVERAGE: %s", checkAverage));
-                summaryLines.add(String.format("    %-45s %s", testName, checkAverage));
-            }
+            // Measurement checkAverage = new Measurement();
+            // {
+            //     final String testName = codingLoop.getClass().getSimpleName() + " isParityCorrect";
+            //     System.out.println("\nTEST: " + testName);
+            //     ReedSolomon codec = new ReedSolomon(DATA_COUNT, PARITY_COUNT, codingLoop);
+            //     System.out.println("    warm up...");
+            //     doOneEncodeMeasurement(codec, bufferSets);
+            //     doOneEncodeMeasurement(codec, bufferSets);
+            //     System.out.println("    testing...");
+            //     for (int iMeasurement = 0; iMeasurement < 10; iMeasurement++) {
+            //         checkAverage.add(doOneCheckMeasurement(codec, bufferSets, tempBuffer));
+            //     }
+            //     System.out.println(String.format("\nAVERAGE: %s", checkAverage));
+            //     summaryLines.add(String.format("    %-45s %s", testName, checkAverage));
+            // }
             csv.append(codingLoopNameToCsvPrefix(codingLoop.getClass().getSimpleName()));
             csv.append(encodeAverage.getRate());
             csv.append(",");
-            csv.append(checkAverage.getRate());
+            // csv.append(checkAverage.getRate());
             csv.append("\n");
         }
 
@@ -116,17 +118,23 @@ public class ReedSolomonBenchmark {
         long passesCompleted = 0;
         long bytesEncoded = 0;
         long encodingTime = 0;
+        long memoryTime = 0;
+        long codingTime = 0;
         while (encodingTime < MEASUREMENT_DURATION) {
             BufferSet bufferSet = bufferSets[nextBuffer];
             nextBuffer = (nextBuffer + 1) % bufferSets.length;
             byte[][] shards = bufferSet.buffers;
             long startTime = System.currentTimeMillis();
-            codec.encodeParity(shards, 0, CHUNK_SIZE);
+            final long[] time = codec.encodeParity(shards, 0, CHUNK_SIZE);
             long endTime = System.currentTimeMillis();
+            memoryTime += time[0];
+            codingTime += time[1];
             encodingTime += (endTime - startTime);
             bytesEncoded += CHUNK_SIZE * DATA_COUNT;
             passesCompleted += 1;
         }
+        System.out.println(String.format("Time taken by memory allocation: %s ", memoryTime));
+        System.out.println(String.format("Time taken by Encoding: %s ", codingTime));
         double seconds = ((double)encodingTime) / 1000.0;
         double megabytes = ((double)bytesEncoded) / 1000000.0;
         Measurement result = new Measurement(megabytes, seconds);
@@ -197,7 +205,6 @@ public class ReedSolomonBenchmark {
         }
         return result;
     }
-
 
     private static class BufferSet {
 

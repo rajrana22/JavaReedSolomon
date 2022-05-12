@@ -3,9 +3,10 @@ import argparse
 import numpy as np
 import seaborn as sns; sns.set_theme()
 import matplotlib.pylab as plt
+from matplotlib.colors import LinearSegmentedColormap
 import re
 
-max_n = 16
+max_n = 17
 max_k = 3
 throughput_filename = "throughput"
 heatmap_filename = "heatmap"
@@ -14,7 +15,7 @@ def run_benchmark(n, k, filename):
     os.system("./run_benchmark.sh -n " + str(n) + " -k " + str(k) + " -f " + filename)
 
 def create_array():
-    array = [[0 for n in range(max_n + 1)] for k in range(max_k + 1)]
+    array = [[np.nan for n in range(max_n + 1)] for k in range(max_k + 1)]
     return array
 
 def generate_single_point(n, k, data, filename):
@@ -29,15 +30,21 @@ def generate_single_point(n, k, data, filename):
 def generate_data(data, filename):
     for n in range(max_n):
         for k in range(max_k):
-            print(n)
-            print(k)
+            print("Generating Data for: " + str(n) + "+" + str(k) + "\n")
             run_benchmark(n+1, k+1, filename)
             generate_single_point(n, k, data, filename)
             os.remove(filename)
 
 def generate_heatmap(data):
     array = np.array(data, dtype=float)
-    ax = sns.heatmap(array, linewidths=0.5, cmap="RePuOrYlGn")
+    myColors = ("Red", "Purple", "Orange", "Yellow", "Green")
+    cmap = LinearSegmentedColormap.from_list("Custom", myColors, len(myColors))
+    mask = np.isnan(array)
+    ax = sns.heatmap(array, cmap=cmap, mask=mask, linewidths=0.5, cbar_kws={"label": "Throughput (MB/s)"})
+
+    # X-Y axis labels
+    ax.set_ylabel("Parity Units K")
+    ax.set_xlabel("Data Units N")
     ax.invert_yaxis()
 
 
