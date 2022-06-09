@@ -71,7 +71,7 @@ set CLASSPATH=%APP_HOME%\lib\gs-gradle-0.1.0.jar
 
 
 @rem Execute JavaReedSolomon
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %JAVA_REED_SOLOMON_OPTS%  -classpath "%CLASSPATH%" com.backblaze.erasure.SampleEncoder %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %JAVA_REED_SOLOMON_OPTS%  -classpath "%CLASSPATH%" com.backblaze.erasure.ReedSolomonBenchmark %*
 
 :end
 @rem End local scope for the variables with windows NT shell
