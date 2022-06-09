@@ -22,10 +22,10 @@ import java.util.Random;
  */
 public class ReedSolomonBenchmark {
 
-    public static int DATA_COUNT = 17;
-    public static int PARITY_COUNT = 3;
+    private static int DATA_COUNT = 17;
+    private static int PARITY_COUNT = 3;
     private static int TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
-    private static final int CHUNK_SIZE = 200 * 1000;
+    private static int CHUNK_SIZE = 128 * 1000;
     private static final int PROCESSOR_CACHE_SIZE = 10 * 1024 * 1024;
     private static final int TWICE_PROCESSOR_CACHE_SIZE = 2 * PROCESSOR_CACHE_SIZE;
     /* Stripe Size */
@@ -42,6 +42,8 @@ public class ReedSolomonBenchmark {
         if (args.length != 0) {
             DATA_COUNT = Integer.parseInt(args[0]);
             PARITY_COUNT = Integer.parseInt(args[1]);
+            CHUNK_SIZE = Integer.parseInt(args[2]);
+            System.out.println(CHUNK_SIZE);
             TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
             NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
         }
