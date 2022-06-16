@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'com.backblaze.erasure.ReedSolomonBenchmark'
+mainClassName = 'com.backblaze.erasure.ReedSolomonBenchmarkMLEC'
 
 repositories {
     mavenCentral()
