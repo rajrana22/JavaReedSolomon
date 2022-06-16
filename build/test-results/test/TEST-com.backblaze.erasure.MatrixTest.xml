@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.backblaze.erasure.MatrixTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-06-08T12:59:52" hostname="Rajs-MacBook-Pro.local" time="0.007">
+<testsuite name="com.backblaze.erasure.MatrixTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-06-16T17:09:07" hostname="Rajs-MacBook-Pro.local" time="0.003">
   <properties/>
-  <testcase name="testIdentity" classname="com.backblaze.erasure.MatrixTest" time="0.002"/>
-  <testcase name="inverse2" classname="com.backblaze.erasure.MatrixTest" time="0.001"/>
-  <testcase name="testMultiply" classname="com.backblaze.erasure.MatrixTest" time="0.001"/>
+  <testcase name="testIdentity" classname="com.backblaze.erasure.MatrixTest" time="0.001"/>
+  <testcase name="inverse2" classname="com.backblaze.erasure.MatrixTest" time="0.0"/>
+  <testcase name="testMultiply" classname="com.backblaze.erasure.MatrixTest" time="0.0"/>
   <testcase name="testBigString" classname="com.backblaze.erasure.MatrixTest" time="0.001"/>
   <testcase name="inverse" classname="com.backblaze.erasure.MatrixTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>

@@ -201,7 +201,7 @@ fi
 
 set -- \
         -classpath "$CLASSPATH" \
-        com.backblaze.erasure.ReedSolomonBenchmark \
+        com.backblaze.erasure.ReedSolomonBenchmarkMLEC \
         "$@"
 
 # Use "xargs" to parse quoted args.

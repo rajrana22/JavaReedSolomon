@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.backblaze.erasure.GaloisTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2022-06-08T12:59:52" hostname="Rajs-MacBook-Pro.local" time="0.197">
+<testsuite name="com.backblaze.erasure.GaloisTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2022-06-16T17:09:07" hostname="Rajs-MacBook-Pro.local" time="0.211">
   <properties/>
-  <testcase name="testGenerateLogTable" classname="com.backblaze.erasure.GaloisTest" time="0.032"/>
-  <testcase name="testExp" classname="com.backblaze.erasure.GaloisTest" time="0.021"/>
-  <testcase name="testAssociativity" classname="com.backblaze.erasure.GaloisTest" time="0.08"/>
-  <testcase name="testWithPythonAnswers" classname="com.backblaze.erasure.GaloisTest" time="0.0"/>
-  <testcase name="testDistributivity" classname="com.backblaze.erasure.GaloisTest" time="0.045"/>
-  <testcase name="testCommutativity" classname="com.backblaze.erasure.GaloisTest" time="0.008"/>
+  <testcase name="testGenerateLogTable" classname="com.backblaze.erasure.GaloisTest" time="0.026"/>
+  <testcase name="testExp" classname="com.backblaze.erasure.GaloisTest" time="0.024"/>
+  <testcase name="testAssociativity" classname="com.backblaze.erasure.GaloisTest" time="0.104"/>
+  <testcase name="testWithPythonAnswers" classname="com.backblaze.erasure.GaloisTest" time="0.001"/>
+  <testcase name="testDistributivity" classname="com.backblaze.erasure.GaloisTest" time="0.043"/>
+  <testcase name="testCommutativity" classname="com.backblaze.erasure.GaloisTest" time="0.006"/>
   <testcase name="testClosure" classname="com.backblaze.erasure.GaloisTest" time="0.0"/>
   <testcase name="testIdentity" classname="com.backblaze.erasure.GaloisTest" time="0.0"/>
-  <testcase name="testMultiplicationTable" classname="com.backblaze.erasure.GaloisTest" time="0.004"/>
-  <testcase name="testInverse" classname="com.backblaze.erasure.GaloisTest" time="0.0"/>
+  <testcase name="testMultiplicationTable" classname="com.backblaze.erasure.GaloisTest" time="0.003"/>
+  <testcase name="testInverse" classname="com.backblaze.erasure.GaloisTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
