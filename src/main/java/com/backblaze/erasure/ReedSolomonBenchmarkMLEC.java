@@ -47,10 +47,6 @@ public class ReedSolomonBenchmarkMLEC {
     private int nextBuffer = 0;
 
     public static void main(String [] args) {
-        System.out.println("\nNUM_NETWORK_STRIPES: " + NUM_NETWORK_STRIPES);
-        System.out.println("\nNUM_LOCAL_STRIPES: " + NUM_LOCAL_STRIPES);
-        System.out.println("\nNETWORK BUFFER SIZE: " + LOCAL_STRIPE_SIZE * NETWORK_TOTAL_COUNT);
-        System.out.println("\nLOCAL BUFFER SIZE: " + CHUNK_SIZE * LOCAL_TOTAL_COUNT);
 
         /* Parse args and set global variables */
         if (args.length != 0) {
@@ -70,6 +66,11 @@ public class ReedSolomonBenchmarkMLEC {
     }
 
     public void run() {
+        System.out.println("\nLOCAL TOTAL COUNT: " + LOCAL_TOTAL_COUNT);
+        System.out.println("\nNUM_NETWORK_STRIPES: " + NUM_NETWORK_STRIPES);
+        System.out.println("\nNUM_LOCAL_STRIPES: " + NUM_LOCAL_STRIPES);
+        System.out.println("\nNETWORK BUFFER SIZE: " + LOCAL_STRIPE_SIZE * NETWORK_TOTAL_COUNT);
+        System.out.println("\nLOCAL BUFFER SIZE: " + CHUNK_SIZE * LOCAL_TOTAL_COUNT);
         System.out.println("preparing...");
         final BufferSet [] networkBufferSets = new BufferSet [NUM_NETWORK_STRIPES];
         for (int iBufferSet = 0; iBufferSet < NUM_NETWORK_STRIPES; iBufferSet++) {
@@ -143,39 +144,40 @@ public class ReedSolomonBenchmarkMLEC {
     private Measurement doOneEncodeMeasurement(ReedSolomon localCodec, ReedSolomon networkCodec, BufferSet[] localBufferSets, BufferSet[] networkBufferSets) {
 
         /* Network */ 
-        nextBuffer = 0;
+        int networkNext = 0;
+        int localNext = 0;
         long passesCompleted = 0;
         long bytesEncoded = 0;
         long encodingTime = 0;
+        int i = 0;
 
-        while (encodingTime < MEASUREMENT_DURATION) {
-            BufferSet bufferSet = networkBufferSets[nextBuffer];
-            nextBuffer = (nextBuffer + 1) % networkBufferSets.length;
+        System.out.print(localBufferSets.length);
+        System.out.print("\n");
+        while (networkNext < networkBufferSets.length) {
+            System.out.print("NEW LINE");
+            System.out.print("\n");
+            BufferSet bufferSet = networkBufferSets[networkNext];
+            networkNext = networkNext + 1;
             byte[][] shards = bufferSet.buffers;
             long startTime = System.currentTimeMillis();
             networkCodec.encodeParity(shards, 0, LOCAL_STRIPE_SIZE);
             long endTime = System.currentTimeMillis();
             encodingTime += (endTime - startTime);
             bytesEncoded += LOCAL_STRIPE_SIZE * NETWORK_DATA_COUNT;
-            passesCompleted += 1;
-        }
-
-        /* Local */
-        nextBuffer = 0;
-        passesCompleted = 0;
-        bytesEncoded = 0;
-        encodingTime = 0;
-
-        while (encodingTime < MEASUREMENT_DURATION) {
-            BufferSet bufferSet = localBufferSets[nextBuffer];
-            nextBuffer = (nextBuffer + 1) % localBufferSets.length;
-            byte[][] shards = bufferSet.buffers;
-            long startTime = System.currentTimeMillis();
-            localCodec.encodeParity(shards, 0, CHUNK_SIZE);
-            long endTime = System.currentTimeMillis();
-            encodingTime += (endTime - startTime);
-            bytesEncoded += CHUNK_SIZE * LOCAL_DATA_COUNT;
-            passesCompleted += 1;
+            while (localNext < LOCAL_TOTAL_COUNT * (i-1)) {
+                System.out.print(localNext);
+                System.out.print("\n");
+                bufferSet = localBufferSets[localNext];
+                localNext = localNext + 1;
+                shards = bufferSet.buffers;
+                startTime = System.currentTimeMillis();
+                localCodec.encodeParity(shards, 0, CHUNK_SIZE);
+                endTime = System.currentTimeMillis();
+                encodingTime += (endTime - startTime);
+                bytesEncoded += CHUNK_SIZE * LOCAL_DATA_COUNT;
+                passesCompleted += 1;
+            }
+            i += 1;
         }
 
         /* Throughput calculation */

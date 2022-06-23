@@ -43,7 +43,6 @@ public class ReedSolomonBenchmark {
             DATA_COUNT = Integer.parseInt(args[0]);
             PARITY_COUNT = Integer.parseInt(args[1]);
             CHUNK_SIZE = Integer.parseInt(args[2]) * 1024;
-            System.out.println(CHUNK_SIZE);
             TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
             NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
         }

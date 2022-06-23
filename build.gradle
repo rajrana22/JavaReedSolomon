@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = 'com.backblaze.erasure.ReedSolomonBenchmarkMLEC'
+mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "NULL"
 
 repositories {
     mavenCentral()
