@@ -22,14 +22,22 @@ import java.util.Random;
  */
 public class ReedSolomonBenchmark {
 
+    /* Data/Parity Shard Counts. */
     private static int DATA_COUNT = 17;
     private static int PARITY_COUNT = 3;
+
+    /* Total Shard Count. */
     private static int TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
+
+    /* Chunk Size and Stripe Sizes. */
     private static int CHUNK_SIZE = 128 * 1024;
-    private static final int PROCESSOR_CACHE_SIZE = 10 * 1024 * 1024;
-    private static final int TWICE_PROCESSOR_CACHE_SIZE = 2 * PROCESSOR_CACHE_SIZE;
+    private static int STRIPE_SIZE = CHUNK_SIZE * DATA_COUNT;
+
+    /* Data File Size. */
+    private static final int FILE_SIZE = 100 * 1024 * 1024;
+
     /* Stripe Size */
-    private static int NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
+    private static int NUM_STRIPES = FILE_SIZE / STRIPE_SIZE + 1;
 
     private static final long MEASUREMENT_DURATION = 2 * 1000;
 
@@ -44,15 +52,16 @@ public class ReedSolomonBenchmark {
             PARITY_COUNT = Integer.parseInt(args[1]);
             CHUNK_SIZE = Integer.parseInt(args[2]) * 1024;
             TOTAL_COUNT = DATA_COUNT + PARITY_COUNT;
-            NUMBER_OF_BUFFER_SETS = TWICE_PROCESSOR_CACHE_SIZE / DATA_COUNT / CHUNK_SIZE + 1;
+            STRIPE_SIZE = CHUNK_SIZE * DATA_COUNT;
+            NUM_STRIPES = FILE_SIZE / STRIPE_SIZE + 1;
         }
         (new ReedSolomonBenchmark()).run();
     }
 
     public void run() {
         System.out.println("preparing...");
-        final BufferSet [] bufferSets = new BufferSet [NUMBER_OF_BUFFER_SETS];
-        for (int iBufferSet = 0; iBufferSet < NUMBER_OF_BUFFER_SETS; iBufferSet++) {
+        final BufferSet [] bufferSets = new BufferSet [NUM_STRIPES];
+        for (int iBufferSet = 0; iBufferSet < NUM_STRIPES; iBufferSet++) {
             bufferSets[iBufferSet] = new BufferSet();
         }
         final byte [] tempBuffer = new byte [CHUNK_SIZE];
@@ -63,9 +72,9 @@ public class ReedSolomonBenchmark {
 
         CodingLoop[] DesiredLoop;
         /* Only benchmark with InputOutputByteTableCodingLoop */
-        DesiredLoop = new CodingLoop[]{CodingLoop.ALL_CODING_LOOPS[7]};
+        // DesiredLoop = new CodingLoop[]{CodingLoop.ALL_CODING_LOOPS[7]};
         /* Loop through all coding loops */
-        // DesiredLoop = CodingLoop.ALL_CODING_LOOPS;
+        DesiredLoop = CodingLoop.ALL_CODING_LOOPS;
         for (CodingLoop codingLoop : DesiredLoop) {
             Measurement encodeAverage = new Measurement();
             {
