@@ -72,9 +72,9 @@ public class ReedSolomonBenchmark {
 
         CodingLoop[] DesiredLoop;
         /* Only benchmark with InputOutputByteTableCodingLoop */
-        // DesiredLoop = new CodingLoop[]{CodingLoop.ALL_CODING_LOOPS[7]};
+        DesiredLoop = new CodingLoop[]{CodingLoop.ALL_CODING_LOOPS[7]};
         /* Loop through all coding loops */
-        DesiredLoop = CodingLoop.ALL_CODING_LOOPS;
+        // DesiredLoop = CodingLoop.ALL_CODING_LOOPS;
         for (CodingLoop codingLoop : DesiredLoop) {
             Measurement encodeAverage = new Measurement();
             {
