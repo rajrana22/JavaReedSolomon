@@ -16,29 +16,24 @@ import java.util.Random;
  * Counts the number of bytes of input data that can be processed per
  * second.
  */
-public class ReedSolomonBenchmarkMLEC {
+public class ReedSolomonBenchmarkLRC {
 
     /* Data/Parity Shard Counts. */
-    private static int NETWORK_DATA_COUNT = 10;
-    private static int NETWORK_PARITY_COUNT = 1;
-    private static int LOCAL_DATA_COUNT = 8;
-    private static int LOCAL_PARITY_COUNT = 1;
-
-    /* Total Shard Counts. */
-    private static int LOCAL_TOTAL_COUNT = LOCAL_DATA_COUNT + LOCAL_PARITY_COUNT;
-    private static int NETWORK_TOTAL_COUNT = NETWORK_DATA_COUNT + NETWORK_PARITY_COUNT;
+    private static int DATA_COUNT = 6;
+    private static int LOCAL_PARITY_COUNT = 2;
+    private static int GLOBAL_PARITY_COUNT = 2;
 
     /* Chunk Size and Stripe Sizes. */
     private static int CHUNK_SIZE = 128 * 1024;
-    private static int LOCAL_STRIPE_SIZE = CHUNK_SIZE * LOCAL_DATA_COUNT;
-    private static int NETWORK_STRIPE_SIZE = LOCAL_STRIPE_SIZE * NETWORK_DATA_COUNT;
+    private static int LOCAL_STRIPE_SIZE = CHUNK_SIZE * (DATA_COUNT / LOCAL_PARITY_COUNT);
+    private static int NETWORK_STRIPE_SIZE = LOCAL_STRIPE_SIZE * LOCAL_PARITY_COUNT;
 
     /* Data File Size. */
     private static final int FILE_SIZE = 100 * 1024 * 1024;
 
-    /* Total Numbers of Stripes. */
-    private static int NUM_NETWORK_STRIPES = FILE_SIZE / NETWORK_STRIPE_SIZE;
-    private static int NUM_LOCAL_STRIPES = LOCAL_TOTAL_COUNT * NUM_NETWORK_STRIPES;
+    /* Encoding Buffer Sizes. */
+    private static int GLOBAL_ENCODING_BUFFER_SIZE = FILE_SIZE / NETWORK_STRIPE_SIZE;
+    private static int LOCAL_ENCODING_BUFFER_SIZE = GLOBAL_ENCODING_BUFFER_SIZE * LOCAL_PARITY_COUNT;
     
     private static final long MEASUREMENT_DURATION = 2 * 1000;
 
@@ -50,34 +45,26 @@ public class ReedSolomonBenchmarkMLEC {
 
         /* Parse args and set global variables */
         if (args.length != 0) {
-            NETWORK_DATA_COUNT = Integer.parseInt(args[0]);
-            NETWORK_PARITY_COUNT = Integer.parseInt(args[1]);
-            LOCAL_DATA_COUNT = Integer.parseInt(args[2]);
-            LOCAL_PARITY_COUNT = Integer.parseInt(args[3]);
-            CHUNK_SIZE = Integer.parseInt(args[4]);
-            LOCAL_TOTAL_COUNT = LOCAL_DATA_COUNT + LOCAL_PARITY_COUNT;
-            NETWORK_TOTAL_COUNT = NETWORK_DATA_COUNT + NETWORK_PARITY_COUNT;
-            LOCAL_STRIPE_SIZE = CHUNK_SIZE * LOCAL_DATA_COUNT;
-            NETWORK_STRIPE_SIZE = LOCAL_STRIPE_SIZE * NETWORK_DATA_COUNT;
-            NUM_NETWORK_STRIPES = FILE_SIZE / NETWORK_STRIPE_SIZE + 1;
-            NUM_LOCAL_STRIPES = LOCAL_TOTAL_COUNT * NUM_NETWORK_STRIPES;
+            DATA_COUNT = Integer.parseInt(args[0]);
+            LOCAL_PARITY_COUNT = Integer.parseInt(args[1]);
+            GLOBAL_PARITY_COUNT = Integer.parseInt(args[2]);
+            CHUNK_SIZE = Integer.parseInt(args[3]);
+            LOCAL_STRIPE_SIZE = CHUNK_SIZE * (DATA_COUNT / LOCAL_PARITY_COUNT);
+            NETWORK_STRIPE_SIZE = LOCAL_STRIPE_SIZE * LOCAL_PARITY_COUNT;
+            GLOBAL_ENCODING_BUFFER_SIZE = FILE_SIZE / NETWORK_STRIPE_SIZE;
+            LOCAL_ENCODING_BUFFER_SIZE = GLOBAL_ENCODING_BUFFER_SIZE * LOCAL_PARITY_COUNT;
         }
-        (new ReedSolomonBenchmarkMLEC()).run();
+        (new ReedSolomonBenchmarkLRC()).run();
     }
 
     public void run() {
-        System.out.println("\nLOCAL TOTAL COUNT: " + LOCAL_TOTAL_COUNT);
-        System.out.println("\nNUM_NETWORK_STRIPES: " + NUM_NETWORK_STRIPES);
-        System.out.println("\nNUM_LOCAL_STRIPES: " + NUM_LOCAL_STRIPES);
-        System.out.println("\nNETWORK BUFFER SIZE: " + LOCAL_STRIPE_SIZE * NETWORK_TOTAL_COUNT);
-        System.out.println("\nLOCAL BUFFER SIZE: " + CHUNK_SIZE * LOCAL_TOTAL_COUNT);
         System.out.println("preparing...");
-        final BufferSet [] networkBufferSets = new BufferSet [NUM_NETWORK_STRIPES];
-        for (int iBufferSet = 0; iBufferSet < NUM_NETWORK_STRIPES; iBufferSet++) {
-            networkBufferSets[iBufferSet] = new BufferSet(0);
+        final BufferSet [] globalBufferSets = new BufferSet [GLOBAL_ENCODING_BUFFER_SIZE];
+        for (int iBufferSet = 0; iBufferSet < GLOBAL_ENCODING_BUFFER_SIZE; iBufferSet++) {
+            globalBufferSets[iBufferSet] = new BufferSet(0);
         }
-        final BufferSet [] localBufferSets = new BufferSet [NUM_LOCAL_STRIPES];
-        for (int iBufferSet = 0; iBufferSet < NUM_LOCAL_STRIPES; iBufferSet++) {
+        final BufferSet [] localBufferSets = new BufferSet [LOCAL_ENCODING_BUFFER_SIZE];
+        for (int iBufferSet = 0; iBufferSet < LOCAL_ENCODING_BUFFER_SIZE; iBufferSet++) {
             localBufferSets[iBufferSet] = new BufferSet(1);
         }
         final byte [] tempBuffer = new byte [CHUNK_SIZE];
@@ -96,14 +83,14 @@ public class ReedSolomonBenchmarkMLEC {
             {
                 final String testName = codingLoop.getClass().getSimpleName() + " encodeParity";
                 System.out.println("\nTEST: " + testName);
-                ReedSolomon networkCodec = new ReedSolomon(NETWORK_DATA_COUNT, NETWORK_PARITY_COUNT, codingLoop);
-                ReedSolomon localCodec = new ReedSolomon(LOCAL_DATA_COUNT, LOCAL_PARITY_COUNT, codingLoop);
+                ReedSolomon globalCodec = new ReedSolomon(DATA_COUNT, GLOBAL_PARITY_COUNT, codingLoop);
+                ReedSolomon localCodec = new ReedSolomon(DATA_COUNT / LOCAL_PARITY_COUNT, 1, codingLoop);
                 System.out.println("    warm up...");
-                doOneEncodeMeasurement(localCodec, networkCodec, localBufferSets, networkBufferSets);
-                doOneEncodeMeasurement(localCodec, networkCodec, localBufferSets, networkBufferSets);
+                doOneEncodeMeasurement(localCodec, globalCodec, localBufferSets, globalBufferSets);
+                doOneEncodeMeasurement(localCodec, globalCodec, localBufferSets, globalBufferSets);
                 System.out.println("    testing...");
                 for (int iMeasurement = 0; iMeasurement < 5; iMeasurement++) {
-                    encodeAverage.add(doOneEncodeMeasurement(localCodec, networkCodec, localBufferSets, networkBufferSets));
+                    encodeAverage.add(doOneEncodeMeasurement(localCodec, globalCodec, localBufferSets, globalBufferSets));
                 }
                 System.out.println(String.format("\nAVERAGE: %s", encodeAverage));
                 summaryLines.add(String.format("    %-45s %s", testName, encodeAverage));
@@ -141,23 +128,23 @@ public class ReedSolomonBenchmarkMLEC {
         }
     }
 
-    private Measurement doOneEncodeMeasurement(ReedSolomon localCodec, ReedSolomon networkCodec, BufferSet[] localBufferSets, BufferSet[] networkBufferSets) {
+    private Measurement doOneEncodeMeasurement(ReedSolomon localCodec, ReedSolomon globalCodec, BufferSet[] localBufferSets, BufferSet[] globalBufferSets) {
 
-        /* Network */ 
+        /* Global */ 
         nextBuffer = 0;
         long passesCompleted = 0;
         long bytesEncoded = 0;
         long encodingTime = 0;
 
         while (encodingTime < MEASUREMENT_DURATION) {
-            BufferSet bufferSet = networkBufferSets[nextBuffer];
-            nextBuffer = (nextBuffer + 1) % networkBufferSets.length;
+            BufferSet bufferSet = globalBufferSets[nextBuffer];
+            nextBuffer = (nextBuffer + 1) % globalBufferSets.length;
             byte[][] shards = bufferSet.buffers;
             long startTime = System.currentTimeMillis();
-            networkCodec.encodeParity(shards, 0, LOCAL_STRIPE_SIZE);
+            globalCodec.encodeParity(shards, 0, LOCAL_STRIPE_SIZE);
             long endTime = System.currentTimeMillis();
             encodingTime += (endTime - startTime);
-            bytesEncoded += LOCAL_STRIPE_SIZE * NETWORK_DATA_COUNT;
+            bytesEncoded += CHUNK_SIZE * DATA_COUNT;
             passesCompleted += 1;
         }
 
@@ -175,7 +162,7 @@ public class ReedSolomonBenchmarkMLEC {
             localCodec.encodeParity(shards, 0, CHUNK_SIZE);
             long endTime = System.currentTimeMillis();
             encodingTime += (endTime - startTime);
-            bytesEncoded += CHUNK_SIZE * LOCAL_DATA_COUNT;
+            bytesEncoded += CHUNK_SIZE * (DATA_COUNT / LOCAL_PARITY_COUNT);
             passesCompleted += 1;
         }
 
@@ -203,7 +190,7 @@ public class ReedSolomonBenchmarkMLEC {
             }
             long endTime = System.currentTimeMillis();
             checkingTime += (endTime - startTime);
-            bytesChecked += CHUNK_SIZE * LOCAL_DATA_COUNT;
+            bytesChecked += CHUNK_SIZE * (DATA_COUNT / LOCAL_PARITY_COUNT);
             passesCompleted += 1;
         }
         double seconds = ((double)checkingTime) / 1000.0;
@@ -263,13 +250,13 @@ public class ReedSolomonBenchmarkMLEC {
 
             /* Network */ 
             if (layer == 0) {
-                totalCount = NETWORK_TOTAL_COUNT;
+                totalCount = DATA_COUNT + GLOBAL_PARITY_COUNT;
                 byteCount = LOCAL_STRIPE_SIZE;
             }
 
             /* Local */
             else if (layer == 1) {
-                totalCount = LOCAL_TOTAL_COUNT;
+                totalCount = (DATA_COUNT / LOCAL_PARITY_COUNT) + 1;
                 byteCount = CHUNK_SIZE;
             }
             buffers = new byte [totalCount] [byteCount];
