@@ -66,11 +66,6 @@ public class ReedSolomonBenchmarkMLEC {
     }
 
     public void run() {
-        System.out.println("\nLOCAL TOTAL COUNT: " + LOCAL_TOTAL_COUNT);
-        System.out.println("\nNUM_NETWORK_STRIPES: " + NUM_NETWORK_STRIPES);
-        System.out.println("\nNUM_LOCAL_STRIPES: " + NUM_LOCAL_STRIPES);
-        System.out.println("\nNETWORK BUFFER SIZE: " + LOCAL_STRIPE_SIZE * NETWORK_TOTAL_COUNT);
-        System.out.println("\nLOCAL BUFFER SIZE: " + CHUNK_SIZE * LOCAL_TOTAL_COUNT);
         System.out.println("preparing...");
         final BufferSet [] networkBufferSets = new BufferSet [NUM_NETWORK_STRIPES];
         for (int iBufferSet = 0; iBufferSet < NUM_NETWORK_STRIPES; iBufferSet++) {
